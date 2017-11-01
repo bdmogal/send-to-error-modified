@@ -1,4 +1,0 @@
-{
-  "properties": {},
-  "parents": ["system:wrangler-service[1.0.0-SNAPSHOT, 10.0.0-SNAPSHOT]"]
-}
