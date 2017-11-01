@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>co.cask.wrangler.directive</groupId>
+  <artifactId>send-to-error-modified</artifactId>
+  <name>Example Modified Send To Error</name>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <!-- properties for script build step that creates the config files for the artifacts -->
+    <widgets.dir>widgets</widgets.dir>
+    <docs.dir>docs</docs.dir>
+    <!-- this is here because project.basedir evaluates to null in the script build step -->
+    <main.basedir>${project.basedir}</main.basedir>
+    <cdap.version>4.3.1</cdap.version>
+    <wrangler.version>3.0.1</wrangler.version>
+    <commons.codec.version>1.10</commons.codec.version>
+    <junit.version>4.12</junit.version>
+  </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>sonatype.release</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>sonatype.snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <!-- Include the Maven Plugin Repository -->
+  <pluginRepositories>
+   <pluginRepository>
+      <id>sonatype</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </pluginRepository>
+  </pluginRepositories>
+         
+  <dependencies>
+    <!-- Core Dependencies -->
+
+    <dependency>
+      <groupId>co.cask.wrangler</groupId>
+      <artifactId>wrangler-api</artifactId>
+      <version>${wrangler.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>co.cask.cdap</groupId>
+      <artifactId>cdap-api</artifactId>
+      <version>${cdap.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>co.cask.cdap</groupId>
+      <artifactId>cdap-etl-api</artifactId>
+      <version>${cdap.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-jexl3</artifactId>
+      <version>3.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>20.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.5</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <!-- Testing Dependencies -->
+    <dependency>
+      <groupId>co.cask.wrangler</groupId>
+      <artifactId>wrangler-test</artifactId>
+      <version>${wrangler.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.1</version>
+          <configuration>
+            <source>1.7</source>
+            <target>1.7</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>2.3.7</version>
+          <extensions>true</extensions>
+          <configuration>
+            <instructions>
+              <Embed-Dependency>*;inline=false;scope=compile</Embed-Dependency>
+              <Embed-Transitive>true</Embed-Transitive>
+              <Embed-Directory>lib</Embed-Directory>
+              <!--Only @Plugin classes in the export packages will be included as plugin-->
+              <_exportcontents>co.cask.wrangler.directive.*</_exportcontents>
+            </instructions>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>bundle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.14.1</version>
+      </plugin>
+      <plugin>
+        <groupId>co.cask</groupId>
+        <artifactId>cdap-maven-plugin</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <configuration>
+          <cdapArtifacts>
+            <!-- TODO: Register the parents of this plugin as wrangler-transform -->
+            <!--parent>system:wrangler-service[1.0.0-SNAPSHOT, 10.0.0-SNAPSHOT],system:wrangler-transform[1.0.0-SNAPSHOT, 10.0.0-SNAPSHOT]</parent-->
+            <parent>system:wrangler-service[1.0.0-SNAPSHOT, 10.0.0-SNAPSHOT]</parent>
+          </cdapArtifacts>
+        </configuration>
+        <executions>
+          <execution>
+            <id>create-artifact-config</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>create-plugin-json</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
