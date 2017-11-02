@@ -156,8 +156,8 @@
         <configuration>
           <cdapArtifacts>
             <!-- TODO: Register the parents of this plugin as wrangler-transform -->
-            <!--parent>system:wrangler-service[1.0.0-SNAPSHOT, 10.0.0-SNAPSHOT],system:wrangler-transform[1.0.0-SNAPSHOT, 10.0.0-SNAPSHOT]</parent-->
             <parent>system:wrangler-service[1.0.0-SNAPSHOT, 10.0.0-SNAPSHOT]</parent>
+            <parent>system:wrangler-transform[1.0.0-SNAPSHOT, 10.0.0-SNAPSHOT]</parent>
           </cdapArtifacts>
         </configuration>
         <executions>
