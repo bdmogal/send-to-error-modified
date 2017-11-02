@@ -14,7 +14,8 @@
     <!-- properties for script build step that creates the config files for the artifacts -->
     <widgets.dir>widgets</widgets.dir>
     <docs.dir>docs</docs.dir>
-    <app.parents>system:wrangler-service[1.0.0-SNAPSHOT, 4.0.0-SNAPSHOT],system:wrangler-transform[1.0.0-SNAPSHOT, 4.0.0-SNAPSHOT],system:cdap-data-pipeline[4.2.0-SNAPSHOT,4.4.0-SNAPSHOT),system:cdap-data-streams[4.2.0-SNAPSHOT,4.4.0-SNAPSHOT)</app.parents>
+    <!-- TODO: Uncomment this line so that the directive is made available for both the wrangler service and the wrangler transform -->
+    <!--app.parents>system:wrangler-service[1.0.0-SNAPSHOT, 4.0.0-SNAPSHOT],system:wrangler-transform[1.0.0-SNAPSHOT, 4.0.0-SNAPSHOT],system:cdap-data-pipeline[4.2.0-SNAPSHOT,4.4.0-SNAPSHOT),system:cdap-data-streams[4.2.0-SNAPSHOT,4.4.0-SNAPSHOT)</app.parents-->
     <!-- this is here because project.basedir evaluates to null in the script build step -->
     <main.basedir>${project.basedir}</main.basedir>
     <cdap.version>4.3.1</cdap.version>
@@ -128,8 +129,8 @@
               <Embed-Dependency>*;inline=false;scope=compile</Embed-Dependency>
               <Embed-Transitive>true</Embed-Transitive>
               <Embed-Directory>lib</Embed-Directory>
-              <!--Only @Plugin classes in the export packages will be included as plugin-->
-              <_exportcontents>co.cask.wrangler.directive.*</_exportcontents>
+              <!-- TODO: Add the directive's java package here, so it is exported and available for other classes to call -->
+              <_exportcontents></_exportcontents>
             </instructions>
           </configuration>
           <executions>
